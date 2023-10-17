@@ -1,7 +1,9 @@
 import pyzipper
 import codecs
 
-PASSWORD_FILE = "password.txt"  # 密码保存文件名
+PASSWORD_FILE1 = "password1.txt"  # 密码保存文件名1
+PASSWORD_FILE2 = "password2.txt"  # 密码保存文件名2
+#只有一个会容易丢失当前进度
 MAX_PASSWORD_LENGTH = 10  # 最大密码长度
 CHARACTERS = "qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM!@#$%^&*()_+=-[]{}\\|,.<>"  # 所有可能的字符
 zip_file_path = "your_zip_file_path" #需要解压的文件全路径
@@ -54,11 +56,17 @@ def index_list_to_string_builder(index_list):
 
 def read_previous_index():
     try:
-        with open(PASSWORD_FILE, "r") as file:
+        with open(PASSWORD_FILE1, "r") as file:
             lines = file.readlines()
             if len(lines) > 0:
                 previous_password = lines[-1].strip()
                 return previous_password
+            else:
+                with open(PASSWORD_FILE2, "r") as file:
+                    lines = file.readlines()
+                    if len(lines) > 0:
+                        previous_password = lines[-1].strip()
+                        return previous_password
     except IOError:
         print("无法读取最新索引。")
     return ""
@@ -69,15 +77,15 @@ def generate_passwords(previous_index, index_list):
     # if string_builder == previous_index:
     #     print("密码重复，跳过")
     #     return False
-    with open(PASSWORD_FILE, "w") as file:
-
+    with open(PASSWORD_FILE1, "w") as file:
+        file.write(string_builder)
+    with open(PASSWORD_FILE2, "w") as file:
+        file.write(string_builder)
         if try_password(zip_file_path, string_builder):
             print(f"Success! Password is {string_builder}")
-            file.write(string_builder + "\n")
             return True
         else:
             print("Password error:", string_builder)
-            file.write(string_builder + "\n")
             return False
 
 
